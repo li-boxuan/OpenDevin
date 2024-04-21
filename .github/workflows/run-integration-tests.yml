@@ -43,4 +43,4 @@ jobs:
           LLM_BASE_URL: "http://localhost:11434"
           AGENT: ${{ matrix.agent }}
           MAX_ITERATIONS: 10
-        run: WORKSPACE_BASE=$GITHUB_WORKSPACE WORKSPACE_MOUNT_PATH=$GITHUB_WORKSPACE poetry run pytest ./tests/integration
+        run: WORKSPACE_BASE=$GITHUB_WORKSPACE WORKSPACE_MOUNT_PATH=$GITHUB_WORKSPACE poetry run pytest -s ./tests/integration
