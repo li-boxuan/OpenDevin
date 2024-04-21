@@ -8,16 +8,16 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: SWEAgent-py311-llama3
+          - name: SWEAgent-py311
             python-version: "3.11"
             agent: "SWEAgent"
-          - name: PlannerAgent-py311-llama3
+          - name: PlannerAgent-py311
             python-version: "3.11"
             agent: "PlannerAgent"
-          - name: MonologueAgent-py311-llama3
+          - name: MonologueAgent-py311
             python-version: "3.11"
             agent: "MonologueAgent"
-          - name: CodeActAgent-py311-llama3
+          - name: CodeActAgent-py311
             python-version: "3.11"
             agent: "CodeActAgent"
     steps:
@@ -42,4 +42,5 @@ jobs:
           LLM_EMBEDDING_MODEL: "local"
           LLM_BASE_URL: "http://localhost:11434"
           AGENT: ${{ matrix.agent }}
-        run: WORKSPACE_MOUNT_PATH=$GITHUB_WORKSPACE poetry run pytest ./tests/integration
+          MAX_ITERATIONS: 10
+        run: WORKSPACE_BASE=$GITHUB_WORKSPACE WORKSPACE_MOUNT_PATH=$GITHUB_WORKSPACE poetry run pytest ./tests/integration

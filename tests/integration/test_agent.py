@@ -1,14 +1,19 @@
 import subprocess
 
+from opendevin.main import main
+
+import asyncio
+
 
 def test_write_simple_script():
-    python_command = [
-        'python', 'opendevin/main.py',
-        '-i', '10',
-        '-t', 'Write a shell script "hello.sh" that prints "hello".',
-        '-d', './'
-    ]
-    subprocess.run(python_command, check=True)
+    # python_command = [
+    #     'python', 'opendevin/main.py',
+    #     '-i', '10',
+    #     '-t', 'Write a shell script "hello.sh" that prints "hello".',
+    #     '-d', './'
+    # ]
+    task = 'Write a shell script "hello.sh" that prints "hello".'
+    asyncio.run(main(task))
 
     # Ensure the 'hello.sh' script is executable
     subprocess.run(['chmod', '+x', 'hello.sh'], check=True)
