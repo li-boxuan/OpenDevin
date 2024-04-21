@@ -1,5 +1,5 @@
-import pytest
 from opendevin.observation import observation_from_dict, Observation, CmdOutputObservation
+
 
 def test_observation_serialization_deserialization():
     original_observation_dict = {
