@@ -3,7 +3,7 @@ name: Run Integration Tests
 on: [push, pull_request]
 
 jobs:
-  llama3-on-linux:
+  llama2-on-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,19 +28,20 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
-      - name: Install Ollama and Llama3
+      - name: Install Ollama and Llama2
         run: |
           curl -fsSL https://ollama.com/install.sh | sh
           sleep 30
-          ollama pull llama3
+          ollama pull llama2
       - name: Build Environment
         run: make build
       - name: Run Integration Tests
         env:
           LLM_API_KEY: "ollama"
-          LLM_MODEL: "ollama/llama3"
+          LLM_MODEL: "ollama/llama2"
           LLM_EMBEDDING_MODEL: "local"
           LLM_BASE_URL: "http://localhost:11434"
+          SANDBOX_TYPE: exec
           AGENT: ${{ matrix.agent }}
-          MAX_ITERATIONS: 10
+          MAX_ITERATIONS: 5
         run: WORKSPACE_BASE=$GITHUB_WORKSPACE WORKSPACE_MOUNT_PATH=$GITHUB_WORKSPACE poetry run pytest -s ./tests/integration
