@@ -71,10 +71,10 @@ class LLM:
             for message in messages:
                 debug_message += '\n\n----------\n\n' + message['content']
             llm_prompt_logger.debug(debug_message)
-            write_prompt_to_json(**kwargs)
+            # write_prompt_to_json(**kwargs)
             resp = completion_unwrapped(*args, **kwargs)
             message_back = resp['choices'][0]['message']['content']
-            write_resp_to_json(message_back)
+            # write_resp_to_json(message_back)
             llm_response_logger.debug(message_back)
             return resp
         self._completion = wrapper  # type: ignore
