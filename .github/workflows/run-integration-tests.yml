@@ -37,11 +37,7 @@ jobs:
         run: make build
       - name: Run Integration Tests
         env:
-          LLM_API_KEY: "ollama"
-          LLM_MODEL: "ollama/llama2"
-          LLM_EMBEDDING_MODEL: "local"
-          LLM_BASE_URL: "http://localhost:11434"
           SANDBOX_TYPE: exec
           AGENT: ${{ matrix.agent }}
-          MAX_ITERATIONS: 5
+          MAX_ITERATIONS: 10
         run: WORKSPACE_BASE=$GITHUB_WORKSPACE WORKSPACE_MOUNT_PATH=$GITHUB_WORKSPACE poetry run pytest -s ./tests/integration
