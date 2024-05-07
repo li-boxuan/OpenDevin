@@ -63,9 +63,9 @@ Note: in order to run integration tests correctly, please ensure your workspace 
 To write an integration test, there are essentially two steps:
 
 1. Decide your task prompt, and the result you want to verify.
-2. Either construct LLM responses by yourself, or run OpenDevin with a real LLM. The system prompts and
-LLM responses are recorded as logs, which you could then copy to test folder.
-The following paragraphs describe how to do it.
+2. Either construct LLM responses by yourself, or run OpenDevin with a real LLM.
+The system prompts and LLM responses are recorded as logs, which you could then
+copy to test folder.  The following paragraphs describe how to do it.
 
 Your `config.toml` should look like this:
 
@@ -77,7 +77,9 @@ WORKSPACE_MOUNT_PATH="<absolute-path-of-your-workspace>"
 ```
 
 You can choose any model you'd like to generate the mock responses.
-You can even handcraft mock responses, especially when you would like to test the behaviour of agent for corner cases. If you use a very weak model (e.g. 8B params), chance is most agents won't be able to finish the task.
+You can even handcraft mock responses, especially when you would like to test the
+behaviour of agent for corner cases. If you use a very weak model (e.g. 8B params),
+chance is most agents won't be able to finish the task.
 
 ```bash
 # Remove logs if you are okay to lose logs. This helps us locate the prompts and responses quickly, but is NOT a must.
@@ -89,12 +91,17 @@ mkdir workspace
 poetry run python ./opendevin/core/main.py -i 10 -t "Write a shell script 'hello.sh' that prints 'hello'." -c "MonologueAgent" -d "./workspace"
 ```
 
-**NOTE**: If your agent decide to support user-agent interaction via natural language (e.g., you will prompted to enter user resposes when running the above `main.py` command), you should create a file named `tests/integration/mock/<AgentName>/<TestName>/user_responses.log` containing all the responses in order you provided to the agent, delimited by newline ('\n'). This will be used to mock the STDIN during testing.
+**NOTE**: If your agent decide to support user-agent interaction via natural language
+(e.g., you will be prompted to enter user resposes when running the above `main.py`
+command), you should create a file named `tests/integration/mock/<AgentName>/<TestName>/user_responses.log`
+containing all the responses in order you provided to the agent, delimited by newline
+('\n'). This will be used to mock the STDIN during testing.
 
 After running the above commands, you should be able to locate the real prompts
 and responses logged. The log folder follows `logs/llm/%y-%m-%d_%H-%M.log` format.
 
-Now, move all files under that folder to `tests/integration/mock/<AgentName>/<TestName>` folder. For example, moving all files from `logs/llm/24-04-23_21-55/` folder to
+Now, move all files under that folder to `tests/integration/mock/<AgentName>/<TestName>` folder.
+For example, moving all files from `logs/llm/24-04-23_21-55/` folder to
 `tests/integration/mock/MonologueAgent/test_write_simple_script` folder.
 
 
