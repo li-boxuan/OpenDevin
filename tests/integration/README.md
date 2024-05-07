@@ -51,7 +51,7 @@ example is as follows:
 
 ```bash
 rm -rf workspace; AGENT=PlannerAgent \
-WORKSPACE_BASE="/Users/admin/OpenDevin/workspace" WORKSPACE_MOUNT_PATH="/Users/admin/OpenDevin/workspace" MAX_ITERATIONS=10 \
+WORKSPACE_BASE="`pwd`/workspace" WORKSPACE_MOUNT_PATH="`pwd`/workspace" MAX_ITERATIONS=10 \
 poetry run pytest -s ./tests/integration
 ```
 
