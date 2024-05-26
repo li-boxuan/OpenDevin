@@ -83,11 +83,12 @@ class AgentController:
             self.state = initial_state
         self.event_stream = event_stream
         self.parent = parent
+        is_delegate: bool = self.parent is not None
         self.event_stream.subscribe(
-            EventStreamSubscriber.AGENT_CONTROLLER, self.on_event
+            EventStreamSubscriber.AGENT_CONTROLLER, self.on_event, append=is_delegate
         )
         self.max_budget_per_task = max_budget_per_task
-        if self.parent is None:
+        if not is_delegate:
             self.agent_task = asyncio.create_task(self._start_step_loop())
 
     async def close(self):
