@@ -69,6 +69,7 @@ class AgentController:
             max_chars: The maximum number of characters the agent can output.
             initial_state: The initial state of the controller.
         """
+        self._step_lock = asyncio.Lock()
         self.id = sid
         self.agent = agent
         self.max_chars = max_chars
@@ -81,13 +82,14 @@ class AgentController:
         self.event_stream.subscribe(
             EventStreamSubscriber.AGENT_CONTROLLER, self.on_event
         )
-        self.agent_task = asyncio.create_task(self._start_step_loop())
+        if self.parent is None:
+            self.agent_task = asyncio.create_task(self._start_step_loop())
 
     async def close(self):
         if self.agent_task is not None:
             self.agent_task.cancel()
-        self.event_stream.unsubscribe(EventStreamSubscriber.AGENT_CONTROLLER)
         await self.set_agent_state_to(AgentState.STOPPED)
+        self.event_stream.unsubscribe(EventStreamSubscriber.AGENT_CONTROLLER)
 
     def update_state_before_step(self):
         self.state.iteration += 1
@@ -110,11 +112,12 @@ class AgentController:
         self.state.updated_info.append((action, observation))
 
     async def _start_step_loop(self):
+        logger.info(f'[Agent Controller {self.id}] Starting step loop...')
         while True:
             try:
                 await self._step()
-            except asyncio.CancelledError:
-                logger.info('AgentController task was cancelled')
+            except asyncio.CancelledError as e:
+                logger.info(f'AgentController task was cancelled: {e}')
                 break
             except Exception as e:
                 traceback.print_exc()
@@ -163,7 +166,7 @@ class AgentController:
 
     async def set_agent_state_to(self, new_state: AgentState):
         logger.info(
-            f'Setting agent({type(self.agent).__name__}) state from {self.state.agent_state} to {new_state}'
+            f'[Agent Controller {self.id}] Setting agent({type(self.agent).__name__}) state from {self.state.agent_state} to {new_state}'
         )
 
         if new_state == self.state.agent_state:
@@ -196,6 +199,7 @@ class AgentController:
             # TODO: the delegate probably doesn't need to know the full history
             history=self.state.history,
         )
+        logger.info(f'[Agent Controller {self.id}]: start delegate')
         self.delegate = AgentController(
             sid=self.id + '-delegate',
             agent=agent,
@@ -208,18 +212,25 @@ class AgentController:
         await self.delegate.set_agent_state_to(AgentState.RUNNING)
 
     async def _step(self):
+        logger.debug(f'[Agent Controller {self.id}] Entering step method')
         if self.get_agent_state() != AgentState.RUNNING:
-            logger.debug('waiting for agent to run...')
+            logger.info(f'[Agent Controller {self.id}] waiting for agent to run...')
             await asyncio.sleep(1)
             return
 
         if self._pending_action:
-            logger.debug('waiting for pending action: ' + str(self._pending_action))
+            logger.info(
+                f'[Agent Controller {self.id}] waiting for pending action: {self._pending_action}'
+            )
             await asyncio.sleep(1)
             return
 
         if self.delegate is not None:
+            logger.debug(f'[Agent Controller {self.id}] Delegate not none, awaiting...')
+            assert self.delegate != self
             await self.delegate._step()
+            logger.debug(f'[Agent Controller {self.id}] Delegate step done')
+            assert self.delegate is not None
             delegate_state = self.delegate.get_agent_state()
             if delegate_state == AgentState.ERROR:
                 # close the delegate upon error
@@ -230,6 +241,9 @@ class AgentController:
                 return
             delegate_done = delegate_state == AgentState.FINISHED
             if delegate_done:
+                logger.info(
+                    f'[Agent Controller {self.id}] Delegate agent has finished execution'
+                )
                 # retrieve delegate result
                 outputs = self.delegate.state.outputs if self.delegate.state else {}
 
@@ -240,13 +254,13 @@ class AgentController:
                 # close delegate controller: we must close the delegate controller before adding new events
                 await self.delegate.close()
 
-                # update delegate result observation
-                obs: Observation = AgentDelegateObservation(content='', outputs=outputs)
-                await self.event_stream.add_event(obs, EventSource.AGENT)
-
                 # clean up delegate status
                 self.delegate = None
                 self.delegateAction = None
+
+                # update delegate result observation
+                obs: Observation = AgentDelegateObservation(content='', outputs=outputs)
+                await self.event_stream.add_event(obs, EventSource.AGENT)
             return
 
         if self.state.num_of_chars > self.max_chars:
