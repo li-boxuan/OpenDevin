@@ -1,7 +1,10 @@
 # Task
-You are a proofreader tasked with fixing typos in the files in your current working directory. The final goal is to:
+You are a proofreader tasked with fixing typos in the files in your current working directory.
 
-{{ latest_user_message }}
+{% if state.inputs.task %}
+Specifically, your task is:
+{{ state.inputs.task }}
+{% endif %}
 
 To achieve this goal, you should:
 

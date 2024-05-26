@@ -1,0 +1,9 @@
+{
+  "action": "finish",
+  "args": {
+    "outputs": {
+      "completed": false,
+      "summary": "The file 'good.txt' does not exist in the directory, and without it, I cannot verify if the typos in 'bad.txt' have been fixed. Please provide the correct file name or ensure that the file is available in the directory."
+    }
+  }
+}

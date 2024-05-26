@@ -16,7 +16,7 @@ provide the correct inputs for the delegate you select.
 ### CoderAgent
 Given a particular task, and a detailed description of the codebase, accomplishes the task
 #### Inputs
-{"task": "string", "codebase_summary": "string"}
+{"task": "string", "summary": "string"}
 
 ### CommitWriterAgent
 Write a git commit message for files in the git staging area
@@ -46,7 +46,7 @@ Given a particular task, finds and describes all relevant parts of the codebase
 ### TypoFixerAgent
 Fixes typos in files in the current working directory
 #### Inputs
-{}
+{"task": "string"}
 
 ### VerifierAgent
 Given a particular task, verifies that the task has been completed

@@ -209,8 +209,6 @@ class AgentController:
             iteration=0,
             max_iterations=self.state.max_iterations,
             num_of_chars=self.state.num_of_chars,
-            # FIXME: task or context should be part of inputs
-            history=self.state.history,
             delegate_level=self.state.delegate_level + 1,
         )
         logger.info(f'[Agent Controller {self.id}]: start delegate')

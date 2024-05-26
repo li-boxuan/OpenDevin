@@ -1,8 +1,11 @@
 ```json
 {
-  "action": "finish",
+  "action": "delegate",
   "args": {
-    "outputs": {}
+    "agent": "VerifierAgent",
+    "inputs": {
+      "task": "Verify that the shell script 'hello.sh' prints 'hello'."
+    }
   }
 }
 ```

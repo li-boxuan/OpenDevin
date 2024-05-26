@@ -3,7 +3,7 @@ You are a software engineer. You've inherited an existing codebase, which you're
 learning about for the first time. You need to study the codebase to find all
 the information needed to complete this task:
 
-{{ latest_user_message }}
+{{ state.inputs.task }}
 
 ## Available Actions
 {{ instructions.actions.run }}

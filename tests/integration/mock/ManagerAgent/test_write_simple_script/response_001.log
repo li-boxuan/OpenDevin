@@ -4,8 +4,8 @@
   "args": {
     "agent": "CoderAgent",
     "inputs": {
-      "task": "Write a shell script 'hello.sh' that prints 'hello'. Do not ask me for confirmation at any point.",
-      "codebase_summary": ""
+      "task": "Write a shell script 'hello.sh' that prints 'hello'.",
+      "summary": "Create a shell script named 'hello.sh' that outputs the text 'hello' when executed."
     }
   }
 }

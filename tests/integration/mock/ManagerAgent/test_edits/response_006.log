@@ -1,21 +1,10 @@
 ```json
 {
-  "action": "finish",
+  "action": "delegate",
   "args": {
-    "outputs": {
-      "summary": {
-        "file": "bad.txt",
-        "typos_fixed": [
-          {
-            "original": "typoo",
-            "fixed": "typo"
-          },
-          {
-            "original": "mor",
-            "fixed": "more"
-          }
-        ]
-      }
+    "agent": "VerifierAgent",
+    "inputs": {
+      "task": "Verify that typos in bad.txt have been fixed"
     }
   }
 }
