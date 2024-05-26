@@ -78,18 +78,15 @@ class AgentController:
             self.state = initial_state
         self.event_stream = event_stream
         self.parent = parent
-        # delegates should not subscribe to event stream - the root controller would do
-        if self.parent is None:
-            self.event_stream.subscribe(
-                EventStreamSubscriber.AGENT_CONTROLLER, self.on_event
-            )
+        self.event_stream.subscribe(
+            EventStreamSubscriber.AGENT_CONTROLLER, self.on_event
+        )
         self.agent_task = asyncio.create_task(self._start_step_loop())
 
     async def close(self):
         if self.agent_task is not None:
             self.agent_task.cancel()
-        if self.parent is None:
-            self.event_stream.unsubscribe(EventStreamSubscriber.AGENT_CONTROLLER)
+        self.event_stream.unsubscribe(EventStreamSubscriber.AGENT_CONTROLLER)
         await self.set_agent_state_to(AgentState.STOPPED)
 
     def update_state_before_step(self):
@@ -132,9 +129,6 @@ class AgentController:
             await asyncio.sleep(0.1)
 
     async def on_event(self, event: Event):
-        if self.delegate:
-            await self.delegate.on_event(event)
-            return
         if isinstance(event, ChangeAgentStateAction):
             await self.set_agent_state_to(event.agent_state)  # type: ignore
         elif isinstance(event, MessageAction):
