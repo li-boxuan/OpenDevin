@@ -5,7 +5,7 @@ from opendevin.controller.agent import Agent
 from opendevin.controller.state.state import State
 from opendevin.events.action import (
     Action,
-    AgentDelegateAction,
+    AddTaskAction,
     AgentFinishAction,
     AgentRecallAction,
     AgentRejectAction,
@@ -15,6 +15,7 @@ from opendevin.events.action import (
     FileReadAction,
     FileWriteAction,
     MessageAction,
+    ModifyTaskAction,
 )
 from opendevin.events.observation import (
     AgentRecallObservation,
@@ -50,16 +51,23 @@ class DummyAgent(Agent):
     """
 
     def __init__(self, llm: LLM):
-        self.delegated = False
         super().__init__(llm)
         self.steps: list[ActionObs] = [
             {
-                'action': MessageAction('Time to get started!'),
+                'action': AddTaskAction(parent='0', goal='check the current directory'),
                 'observations': [NullObservation('')],
             },
             {
-                'action': AgentDelegateAction(agent='DummyAgent', inputs={'depth': 3}),
-                'observations': [],  # AgentFinishObservation('', outputs={'message': 'Hi!'})],
+                'action': AddTaskAction(parent='0.0', goal='run ls'),
+                'observations': [NullObservation('')],
+            },
+            {
+                'action': ModifyTaskAction(task_id='0.0', state='in_progress'),
+                'observations': [NullObservation('')],
+            },
+            {
+                'action': MessageAction('Time to get started!'),
+                'observations': [NullObservation('')],
             },
             {
                 'action': CmdRunAction(command='echo "foo"'),
@@ -135,14 +143,6 @@ class DummyAgent(Agent):
 
     def step(self, state: State) -> Action:
         time.sleep(0.1)
-        if 'depth' in state.inputs:
-            if self.delegated or state.inputs['depth'] == 0:
-                return AgentFinishAction(outputs={'message': 'Hi!'})
-            self.delegated = True
-            return AgentDelegateAction(
-                agent='DummyAgent', inputs={'depth': state.inputs['depth'] - 1}
-            )
-
         if state.iteration > 0:
             prev_step = self.steps[state.iteration - 1]
             if 'observations' in prev_step:
@@ -166,9 +166,9 @@ class DummyAgent(Agent):
                     if hist_obs != expected_obs:
                         print('\nactual', hist_obs)
                         print('\nexpect', expected_obs)
-                    # assert (
-                    # hist_obs == expected_obs
-                    # ), f'Expected observation {expected_obs}, got {hist_obs}'
+                    assert (
+                        hist_obs == expected_obs
+                    ), f'Expected observation {expected_obs}, got {hist_obs}'
         return self.steps[state.iteration]['action']
 
     def search_memory(self, query: str) -> list[str]:
