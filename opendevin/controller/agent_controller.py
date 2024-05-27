@@ -281,7 +281,7 @@ class AgentController:
             raise MaxCharsExceedError(self.state.num_of_chars, self.max_chars)
 
         logger.info(
-            f'LEVEL {self.state.delegate_level} STEP {self.state.iteration}',
+            f'{type(self.agent).__name__} LEVEL {self.state.delegate_level} STEP {self.state.iteration}',
             extra={'msg_type': 'STEP'},
         )
         if self.state.iteration >= self.state.max_iterations:

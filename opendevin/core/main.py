@@ -118,9 +118,7 @@ async def main(
 
     await controller.close()
     runtime.close()
-    final_state = controller.get_state()
-    print(final_state)
-    return final_state
+    return controller.get_state()
 
 
 if __name__ == '__main__':
