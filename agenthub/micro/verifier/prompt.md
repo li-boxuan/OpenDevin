@@ -4,7 +4,8 @@ codebase which are supposed to solve this task:
 
 {{ state.inputs.task }}
 
-Note the changes might be applied in-line.
+Note the changes might have already been applied in-line. You should focus on
+validating if the task is solved, nothing else.
 
 ## Available Actions
 {{ instructions.actions.run }}

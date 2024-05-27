@@ -1,0 +1,10 @@
+```json
+{
+  "action": "finish",
+  "args": {
+    "outputs": {
+      "summary": "Fixed typos in bad.txt by replacing 'typoo' with 'typo' and 'mor' with 'more'."
+    }
+  }
+}
+```

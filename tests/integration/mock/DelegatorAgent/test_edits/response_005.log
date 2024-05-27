@@ -1,0 +1,9 @@
+```json
+{
+  "action": "run",
+  "args": {
+    "command": "sed -i 's/typoo/typo/g; s/mor/more/g' bad.txt",
+    "background": false
+  }
+}
+```
