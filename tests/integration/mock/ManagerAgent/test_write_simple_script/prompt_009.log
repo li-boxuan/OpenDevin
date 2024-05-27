@@ -8,7 +8,8 @@ codebase which are supposed to solve this task:
 
 Verify that the shell script 'hello.sh' prints 'hello'.
 
-Note the changes might be applied in-line.
+Note the changes might have already been applied in-line. You should focus on
+validating if the task is solved, nothing else.
 
 ## Available Actions
 * `run` - runs a command on the command line in a Linux shell. Arguments:
