@@ -30,7 +30,7 @@ Create a shell script named 'hello.sh' that outputs the text 'hello' when execut
   * `content` - the thought to record
   * `wait_for_response` - set to `true` to wait for the user to respond before proceeding
 
-* `finish` - if you're absolutely certain that you've completed your task and have tested your work, use the finish action to stop working. Arguments:
+* `finish` - if you're absolutely certain that you've completed your task, use the finish action to stop working. Arguments:
   * `outputs` - a dictionary representing the outputs of your task, if any
 
 

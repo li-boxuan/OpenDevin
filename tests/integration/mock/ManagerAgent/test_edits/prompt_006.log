@@ -67,7 +67,7 @@ They are time-ordered, with your most recent action at the bottom.
   * `agent` - the agent to which the task is delegated. MUST match a name in the list of agents provided.
   * `inputs` - a dictionary of input parameters to the agent, as specified in the list
 
-* `finish` - if you're absolutely certain that you've completed your task and have tested your work, use the finish action to stop working. Arguments:
+* `finish` - if you're absolutely certain that you've completed your task, use the finish action to stop working. Arguments:
   * `outputs` - a dictionary representing the outputs of your task, if any
 
 
