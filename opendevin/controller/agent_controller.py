@@ -173,6 +173,9 @@ class AgentController:
             elif isinstance(event, CmdOutputObservation):
                 await self.add_history(NullAction(), event)
                 logger.info(event, extra={'msg_type': 'OBSERVATION'})
+            elif isinstance(event, AgentDelegateObservation):
+                await self.add_history(NullAction(), event)
+                logger.info(event, extra={'msg_type': 'OBSERVATION'})
 
     def reset_task(self):
         self.agent.reset()
@@ -260,8 +263,7 @@ class AgentController:
                 outputs = self.delegate.state.outputs if self.delegate.state else {}
 
                 # update current controller's state
-                self.state.iteration = self.delegate.state.iteration
-                self.state.num_of_chars = self.delegate.state.num_of_chars
+                self.state.history += self.delegate.state.history
 
                 # close delegate controller: we must close the delegate controller before adding new events
                 await self.delegate.close()
