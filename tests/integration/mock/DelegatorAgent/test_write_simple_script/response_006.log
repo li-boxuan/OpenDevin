@@ -1,8 +1,6 @@
-```json
 {
   "action": "read",
   "args": {
-    "path": "bad.txt"
+    "path": "hello.sh"
   }
 }
-```

@@ -1,9 +1,9 @@
 ```json
 {
-  "action": "run",
+  "action": "write",
   "args": {
-    "command": "sed -i 's/typoo/typo/g; s/mor/more/g' bad.txt",
-    "background": false
+    "path": "bad.txt",
+    "content": "This is a stupid typo.\nReally?\nNo more typos!\nEnjoy!\n"
   }
 }
 ```

@@ -6,7 +6,7 @@
 You are a software architect. Your team has inherited an existing codebase, and
 need to finish a project:
 
-Fix typos in bad.txt. Do not ask me for confirmation at any point.
+Write a shell script 'hello.sh' that prints 'hello'. Do not ask me for confirmation at any point.
 
 As an architect, you need to study the codebase to find all the information that
 might be helpful for your software engineering team.
@@ -42,7 +42,7 @@ as well as observations you've made. This only includes the MOST RECENT
 actions and observations--more may have happened before that.
 They are time-ordered, with your most recent action at the bottom.
 
-[]
+[[{"source": "agent", "action": "run", "args": {"command": "ls", "background": false, "thought": ""}}, {"source": "agent", "observation": "run", "content": "", "extras": {"command_id": -1, "command": "ls", "exit_code": 0}}]]
 
 ## Format
 Your response MUST be in JSON format. It must be an object, and it must contain two fields:

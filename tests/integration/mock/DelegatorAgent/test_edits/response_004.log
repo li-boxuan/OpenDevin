@@ -1,9 +1,8 @@
 ```json
 {
-  "action": "run",
+  "action": "read",
   "args": {
-    "command": "grep -r 'typoo\\|mor' .",
-    "background": false
+    "path": "bad.txt"
   }
 }
 ```

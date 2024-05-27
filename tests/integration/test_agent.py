@@ -21,10 +21,6 @@ workspace_base = os.getenv('WORKSPACE_BASE')
     reason='BrowsingAgent is a specialized agent',
 )
 @pytest.mark.skipif(
-    os.getenv('AGENT') == 'DelegatorAgent',
-    reason='DelegatorAgent is not yet capable of this task',
-)
-@pytest.mark.skipif(
     os.getenv('AGENT') == 'CodeActAgent' and os.getenv('SANDBOX_TYPE').lower() != 'ssh',
     reason='CodeActAgent only supports ssh sandbox which is stateful',
 )

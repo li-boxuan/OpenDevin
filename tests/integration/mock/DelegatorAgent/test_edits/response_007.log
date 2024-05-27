@@ -1,10 +1,8 @@
 ```json
 {
-  "action": "finish",
+  "action": "read",
   "args": {
-    "outputs": {
-      "summary": "Fixed typos in bad.txt by replacing 'typoo' with 'typo' and 'mor' with 'more'."
-    }
+    "path": "bad.txt"
   }
 }
 ```
