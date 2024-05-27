@@ -60,7 +60,7 @@ class AgentController:
         max_chars: int = MAX_CHARS,
         max_budget_per_task: float | None = MAX_BUDGET_PER_TASK,
         initial_state: State | None = None,
-        parent: 'AgentController | None' = None,
+        is_delegate: bool = False,
     ):
         """Initializes a new instance of the AgentController class.
 
@@ -72,6 +72,7 @@ class AgentController:
             max_chars: The maximum number of characters the agent can output.
             max_budget_per_task: The maximum budget (in USD) allowed per task, beyond which the agent will stop.
             initial_state: The initial state of the controller.
+            is_delegate: Whether this controller is a delegate.
         """
         self._step_lock = asyncio.Lock()
         self.id = sid
@@ -82,8 +83,6 @@ class AgentController:
         else:
             self.state = initial_state
         self.event_stream = event_stream
-        self.parent = parent
-        is_delegate: bool = self.parent is not None
         self.event_stream.subscribe(
             EventStreamSubscriber.AGENT_CONTROLLER, self.on_event, append=is_delegate
         )
@@ -129,8 +128,8 @@ class AgentController:
         while True:
             try:
                 await self._step()
-            except asyncio.CancelledError as e:
-                logger.info(f'AgentController task was cancelled: {e}')
+            except asyncio.CancelledError:
+                logger.info('AgentController task was cancelled')
                 break
             except Exception as e:
                 traceback.print_exc()
@@ -222,7 +221,7 @@ class AgentController:
             max_iterations=self.state.max_iterations,
             max_chars=self.max_chars,
             initial_state=state,
-            parent=self,
+            is_delegate=True,
         )
         await self.delegate.set_agent_state_to(AgentState.RUNNING)
 
