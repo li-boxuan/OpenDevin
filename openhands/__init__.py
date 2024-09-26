@@ -3,7 +3,7 @@ def get_version():
         from importlib.metadata import PackageNotFoundError, version
 
         try:
-            return version('openhands-ai')
+            return version('openhands-ai-test')
         except PackageNotFoundError:
             pass
     except ImportError:
@@ -13,7 +13,7 @@ def get_version():
         from pkg_resources import DistributionNotFound, get_distribution
 
         try:
-            return get_distribution('openhands-ai').version
+            return get_distribution('openhands-ai-test').version
         except DistributionNotFound:
             pass
     except ImportError:

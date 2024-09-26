@@ -27,7 +27,7 @@ def _put_source_code_to_dir(temp_dir: str):
     if not os.path.isdir(temp_dir):
         raise RuntimeError(f'Temp directory {temp_dir} does not exist')
 
-    package_name = 'openhands-ai'
+    package_name = 'openhands-ai-test'
     dest_dir = os.path.join(temp_dir, 'code')
 
     try:
