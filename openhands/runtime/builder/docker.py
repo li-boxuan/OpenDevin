@@ -11,6 +11,60 @@ from openhands.core.logger import openhands_logger as logger
 from openhands.runtime.builder.base import RuntimeBuilder
 
 
+class SubprocessHandler:
+    def __init__(self):
+        self.output = []
+
+    def _output_logs(self, line):
+        logger.info(line)
+        self.output.append(line)
+
+    def run_subprocess(self, buildx_cmd):
+        try:
+            process = subprocess.Popen(
+                buildx_cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+                bufsize=1,
+            )
+            if process.stdout:
+                for line in iter(process.stdout.readline, ''):
+                    line = line.strip()
+                    if line:
+                        self._output_logs(line)
+            return_code = process.wait()
+            if return_code != 0:
+                raise subprocess.CalledProcessError(
+                    return_code,
+                    process.args,
+                    output='\n'.join(self.output),
+                    stderr=None,
+                )
+        except subprocess.CalledProcessError as e:
+            logger.error(f'Image build failed:\n{e}')
+            logger.error(f'Command output:\n{e.output}')
+            raise
+
+        except subprocess.TimeoutExpired:
+            logger.error('Image build timed out')
+            raise
+
+        except FileNotFoundError as e:
+            logger.error(f'Python executable not found: {e}')
+            raise
+
+        except PermissionError as e:
+            logger.error(
+                f'Permission denied when trying to execute the build command:\n{e}'
+            )
+            raise
+
+        except Exception as e:
+            logger.error(f'An unexpected error occurred during the build process: {e}')
+            raise
+
+
 class DockerRuntimeBuilder(RuntimeBuilder):
     def __init__(self, docker_client: docker.DockerClient):
         self.docker_client = docker_client
@@ -92,53 +146,8 @@ class DockerRuntimeBuilder(RuntimeBuilder):
             sys.stdout.write('\n' * self.max_lines)
             sys.stdout.flush()
 
-        try:
-            process = subprocess.Popen(
-                buildx_cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-                bufsize=1,
-            )
-
-            if process.stdout:
-                for line in iter(process.stdout.readline, ''):
-                    line = line.strip()
-                    if line:
-                        self._output_logs(line)
-
-            return_code = process.wait()
-
-            if return_code != 0:
-                raise subprocess.CalledProcessError(
-                    return_code,
-                    process.args,
-                    output=process.stdout.read() if process.stdout else None,
-                    stderr=process.stderr.read() if process.stderr else None,
-                )
-
-        except subprocess.CalledProcessError as e:
-            logger.error(f'Image build failed:\n{e}')
-            logger.error(f'Command output:\n{e.output}')
-            raise
-
-        except subprocess.TimeoutExpired:
-            logger.error('Image build timed out')
-            raise
-
-        except FileNotFoundError as e:
-            logger.error(f'Python executable not found: {e}')
-            raise
-
-        except PermissionError as e:
-            logger.error(
-                f'Permission denied when trying to execute the build command:\n{e}'
-            )
-            raise
-
-        except Exception as e:
-            logger.error(f'An unexpected error occurred during the build process: {e}')
-            raise
+        handler = SubprocessHandler()
+        handler.run_subprocess(buildx_cmd)
 
         logger.info(f'Image [{target_image_hash_name}] build finished.')
 
