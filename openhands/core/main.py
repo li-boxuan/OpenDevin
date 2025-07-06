@@ -279,6 +279,8 @@ if __name__ == '__main__':
 
     config: OpenHandsConfig = setup_config_from_args(args)
 
+    logger.info(f'Config: {config}')
+
     # Read task from file, CLI args, or stdin
     task_str = read_task(args, config.cli_multiline_input)
 

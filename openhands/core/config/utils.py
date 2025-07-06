@@ -759,6 +759,12 @@ def get_parser() -> argparse.ArgumentParser:
         type=bool,
         default=False,
     )
+    parser.add_argument(
+        '--save-trajectory-path',
+        help='Path to save the trajectory',
+        type=str,
+        default=None,
+    )
     return parser
 
 
@@ -849,5 +855,9 @@ def setup_config_from_args(args: argparse.Namespace) -> OpenHandsConfig:
     # Read selected repository in config for use by CLI and main.py
     if args.selected_repo is not None:
         config.sandbox.selected_repo = args.selected_repo
+
+    # Set trajectory save path if provided
+    if args.save_trajectory_path is not None:
+        config.save_trajectory_path = args.save_trajectory_path
 
     return config
