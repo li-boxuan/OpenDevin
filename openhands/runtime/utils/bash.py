@@ -678,4 +678,30 @@ class BashSession:
 
             logger.debug(f'SLEEPING for {self.POLL_INTERVAL} seconds for next poll')
             time.sleep(self.POLL_INTERVAL)
-        raise RuntimeError('Bash session was likely interrupted...')
+
+        # If we exit the loop due to graceful shutdown, return a proper observation
+        # instead of raising an error
+        logger.debug('Bash execute loop exited due to shutdown signal')
+        _ps1_matches = CmdOutputMetadata.matches_ps1_metadata(last_pane_output)
+        current_matches_for_output = (
+            _ps1_matches if _ps1_matches else initial_ps1_matches
+        )
+        raw_command_output = self._combine_outputs_between_matches(
+            last_pane_output, current_matches_for_output
+        )
+        metadata = CmdOutputMetadata()
+        metadata.suffix = (
+            '\n[Command execution was interrupted due to graceful shutdown.]'
+        )
+        command_output = self._get_command_output(
+            command,
+            raw_command_output,
+            metadata,
+            continue_prefix='[Below is the output of the command before shutdown.]\n',
+        )
+        return CmdOutputObservation(
+            command=command,
+            content=command_output,
+            metadata=metadata,
+            hidden=getattr(action, 'hidden', False),
+        )

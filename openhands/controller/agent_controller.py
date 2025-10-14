@@ -197,6 +197,9 @@ class AgentController:
         # security analyzer for direct access
         self.security_analyzer = security_analyzer
 
+        # Track running tasks for proper cleanup during shutdown
+        self._running_tasks: set[asyncio.Task] = set()
+
         # Add the system message to the event stream
         self._add_system_message()
 
@@ -273,6 +276,27 @@ class AgentController:
         """
         if set_stop_state:
             await self.set_agent_state_to(AgentState.STOPPED)
+
+        # Cancel all running tasks to prevent "cannot schedule new futures" errors
+        if hasattr(self, '_running_tasks'):
+            for task in list(self._running_tasks):
+                if not task.done():
+                    task.cancel()
+
+            # Wait for tasks to be cancelled with a timeout
+            if self._running_tasks:
+                try:
+                    await asyncio.wait_for(
+                        asyncio.gather(*self._running_tasks, return_exceptions=True),
+                        timeout=2.0,
+                    )
+                except asyncio.TimeoutError:
+                    logger.warning(
+                        'Some agent controller tasks did not cancel within timeout'
+                    )
+                except Exception:
+                    # Ignore exceptions from cancelled tasks
+                    pass
 
         self.state_tracker.close(self.event_stream)
 
@@ -363,8 +387,15 @@ class AgentController:
         # Set the agent state to ERROR after storing the reason
         await self.set_agent_state_to(AgentState.ERROR)
 
+    def _create_tracked_task(self, coro) -> asyncio.Task:
+        """Create a task and track it for proper cleanup during shutdown."""
+        task = asyncio.create_task(coro)
+        self._running_tasks.add(task)
+        task.add_done_callback(self._running_tasks.discard)
+        return task
+
     def step(self) -> None:
-        asyncio.create_task(self._step_with_exception_handling())
+        self._create_tracked_task(self._step_with_exception_handling())
 
     async def _step_with_exception_handling(self) -> None:
         try:
@@ -444,6 +475,10 @@ class AgentController:
         Args:
             event (Event): The incoming event to process.
         """
+        # If the controller is closed, don't process any more events
+        if self._closed:
+            return
+
         # If we have a delegate that is not finished or errored, forward events to it
         if self.delegate is not None:
             delegate_state = self.delegate.get_agent_state()

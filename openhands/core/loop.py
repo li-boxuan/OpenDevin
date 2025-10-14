@@ -24,7 +24,9 @@ async def run_agent_until_done(
             logger.error(msg)
             if controller:
                 controller.state.last_error = msg
-                asyncio.create_task(controller.set_agent_state_to(AgentState.ERROR))
+                controller._create_tracked_task(
+                    controller.set_agent_state_to(AgentState.ERROR)
+                )
         else:
             logger.info(msg)
 
