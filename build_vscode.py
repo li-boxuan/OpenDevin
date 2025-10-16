@@ -104,6 +104,11 @@ def build(setup_kwargs):
     # Poetry will handle including files based on pyproject.toml `include` patterns.
     # Ensure openhands/integrations/vscode/*.vsix is included there.
 
+    # Note: Poetry auto-generates openhands/__init__.py for namespace packages
+    # The actual __init__.py with version imports is in the source and will be
+    # overwritten by Poetry's namespace package handler. This is a known Poetry
+    # limitation with namespace packages.
+
     print('--- Custom Poetry build script (build_vscode.py) finished ---')
 
 

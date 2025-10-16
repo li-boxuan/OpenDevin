@@ -273,13 +273,13 @@ class State:
     def to_llm_metadata(self, model_name: str, agent_name: str) -> dict:
         metadata = {
             'session_id': self.session_id,
-            'trace_version': openhands.__version__,
+            'trace_version': openhands.version.__version__,
             'trace_user_id': self.user_id,
             'tags': [
                 f'model:{model_name}',
                 f'agent:{agent_name}',
                 f'web_host:{os.environ.get("WEB_HOST", "unspecified")}',
-                f'openhands_version:{openhands.__version__}',
+                f'openhands_version:{openhands.version.__version__}',
             ],
         }
         return metadata

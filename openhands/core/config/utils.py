@@ -784,7 +784,7 @@ def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = get_headless_parser()
     args = parser.parse_args()
-    from openhands import get_version
+    from openhands.version import get_version
 
     if args.version:
         print(f'OpenHands version: {get_version()}')

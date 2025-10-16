@@ -17,6 +17,7 @@ packages = [
   { include = "third_party" },
 ]
 include = [
+  "openhands/__init__.py",
   "openhands/integrations/vscode/openhands-vscode-0.0.1.vsix",
   "microagents/**/*.md",
 ]

@@ -167,7 +167,7 @@ def handle_fast_commands() -> bool:
 
     # Handle --version or -v
     if len(sys.argv) == 2 and sys.argv[1] in ('--version', '-v'):
-        from openhands import get_version
+        from openhands.version import get_version
 
         print(f'OpenHands CLI version: {get_version()}')
 
