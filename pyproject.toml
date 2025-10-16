@@ -13,14 +13,12 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/li-boxuan/opendevin"
 packages = [
-  { include = "openhands/**/*" },
-  { include = "third_party/**/*" },
-  { include = "pyproject.toml", to = "openhands" },
-  { include = "poetry.lock", to = "openhands" },
+  { include = "openhands" },
+  { include = "third_party" },
 ]
 include = [
   "openhands/integrations/vscode/openhands-vscode-0.0.1.vsix",
-  "microagents/**/*",
+  "microagents/**/*.md",
 ]
 build = "build_vscode.py" # Build VSCode extension during Poetry build
 
